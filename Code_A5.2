@@ -1,0 +1,101 @@
+Skip to content
+ 
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ @rohit230293 Sign out
+0
+0 0 arvind1606/Big_data_Assignment_5.2
+ Code  Issues 0  Pull requests 0  Projects 0  Wiki  Insights
+Big_data_Assignment_5.2/Sol5.2
+8ad13df  on Jun 5
+@arvind1606 arvind1606 Update Sol5.2
+     
+72 lines (55 sloc)  2.64 KB
+import numpy as np
+import pandas as pd
+import scipy.stats as st
+from scipy.stats import f
+
+data = {"Group1": [51, 45, 33, 45, 67],
+        "Group2": [23, 43, 23, 43, 45],
+        "Group3": [56, 76, 74, 87, 56]}
+df = pd.DataFrame(data)
+print(df)
+
+Alpha_Val = 0.05
+
+print('-------------------------------------------------------')
+print("H0 = (mean_for_Gr1 == mean_for_Gr2 == mean_for_Gr3)")
+print("H0 = Means have some differance")
+print('-------------------------------------------------------')
+df_rows = df.shape[0]
+df_col = df.shape[1]
+
+DOF_between = df.shape[1] - 1
+DOF_within = (df.shape[0] * df.shape[1]) - df.shape[1]
+DOF_total = DOF_between + DOF_within
+print('DOF_within = {} , DOF_between = {} and DOF_total = {}'.format(DOF_within,DOF_between,DOF_total))
+print('-------------------------------------------------------')
+F_critical = st.f.ppf(q=1-Alpha_Val, dfn=DOF_between, dfd=DOF_within)
+print('F_critical value here is {}'.format(F_critical))
+print('-------------------------------------------------------')
+
+#Calculating square of dev using mean and Dev for each group
+new_col = (df.Group1 - df.Group1.mean())**2
+df.insert(loc=1, column='sq_of_dev_Gr1', value=new_col)
+
+new_col = (df.Group2 - df.Group2.mean())**2
+df.insert(loc=3, column='sq_of_dev_Gr2', value=new_col)
+
+new_col = (df.Group3 - df.Group3.mean())**2
+df.insert(loc=5, column='sq_of_dev_Gr3', value=new_col)
+
+#df.loc['sm'] = df.sum()
+#MS = (df.sq_of_dev_Gr1.sum()/df_col + df.sq_of_dev_Gr2.sum()/df_col + df.sq_of_dev_Gr3.sum()/df_col)/(df_rows-1)
+Grand_mean = (df.Group1.sum()+df.Group2.sum()+df.Group3.sum())/(df_rows*df_col)
+print('Grand mean is {}'.format(Grand_mean))DOF_total
+
+sum_sq_total = ((df.Group1-Grand_mean)**2).sum() \
+                +((df.Group2-Grand_mean)**2).sum() \
+                +((df.Group3-Grand_mean)**2).sum()
+        
+print("sum_sq_total is {}".format(sum_sq_total))
+
+sum_sq_within = df.sq_of_dev_Gr1.sum()+df.sq_of_dev_Gr2.sum()+df.sq_of_dev_Gr3.sum()
+print("sum_sq_within is {}".format(sum_sq_within))
+
+sum_sq_between = sum_sq_total - sum_sq_within
+print("sum_sq_between is {}".format(sum_sq_between))
+
+print('-------------------------------------------------------')
+Var_between = sum_sq_between / DOF_between
+print("Var_between is {}".format(Var_between))
+
+Var_within = sum_sq_within / DOF_within
+print("Var_within is {}".format(Var_within))
+
+F_value = Var_between/Var_within
+
+print("F_value is {}".format(F_value))
+print('-------------------------------------------------------')
+if F_value > F_critical:
+    print("since F_value is Greater than F_critical, Reject the null Hypothysis !!")
+else:
+    print("since F_critical is Greater than F_value, We can't reject the null Hypothysis !!")
+© 2018 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+API
+Training
+Shop
+Blog
+About
+Press h to open a hovercard with more details.
